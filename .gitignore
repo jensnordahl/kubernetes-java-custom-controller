@@ -1,3 +1,5 @@
 .idea/*
 *.iml
-**/target
+**/targetkubernetes-controller/.gradle/
+kubernetes-controller/build
+kubernetes-controller/.gradle

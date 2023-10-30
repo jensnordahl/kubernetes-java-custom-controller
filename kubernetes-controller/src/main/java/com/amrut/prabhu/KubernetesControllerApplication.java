@@ -89,7 +89,7 @@ public class KubernetesControllerApplication {
                         .withWorkQueueKeyFunc(this::myCrdKeyForConfigMap)
                         .withResyncPeriod(Duration.of(1, ChronoUnit.SECONDS))
                         .build())
-                // .withWorkerCount(2)
+                .withWorkerCount(2)
                 .withReconciler(reconciler)
                 .withReadyFunc(() -> myCrdInformer.hasSynced() && configMapInformer.hasSynced())
                 .withName("My controller")

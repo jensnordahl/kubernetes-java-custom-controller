@@ -51,7 +51,7 @@ public class KubernetesControllerApplication {
     }
 
     @Bean
-    SharedIndexInformer<V1MyCrd> sharedIndexInformer(SharedInformerFactory sharedInformerFactory, ApiClient apiClient) {
+    SharedIndexInformer<V1MyCrd> myCrdInformer(SharedInformerFactory sharedInformerFactory, ApiClient apiClient) {
         GenericKubernetesApi<V1MyCrd, V1MyCrdList> api = new GenericKubernetesApi<>(V1MyCrd.class,
                 V1MyCrdList.class,
                 "com.amrut.prabhu",
@@ -74,23 +74,24 @@ public class KubernetesControllerApplication {
 
 
     @Bean
-    Controller controller(SharedInformerFactory shareformerFactory,
-                          Reconciler reconsiler,
-                          SharedIndexInformer<V1MyCrd> shareIndexInformer) {
+    Controller controller(SharedInformerFactory sharedInformerFactory,
+                          Reconciler reconciler,
+                          SharedIndexInformer<V1MyCrd> myCrdInformer,
+                          SharedIndexInformer<V1ConfigMap> configMapInformer) {
         return ControllerBuilder
-                .defaultBuilder(shareformerFactory)
-                .watch(contrWatchQueue -> ControllerBuilder
-                        .controllerWatchBuilder(V1MyCrd.class, contrWatchQueue)
+                .defaultBuilder(sharedInformerFactory)
+                .watch(workQueue -> ControllerBuilder
+                        .controllerWatchBuilder(V1MyCrd.class, workQueue)
                         .withResyncPeriod(Duration.of(1, ChronoUnit.SECONDS))
                         .build())
-                .watch(contrWatchQueue -> ControllerBuilder
-                        .controllerWatchBuilder(V1ConfigMap.class, contrWatchQueue)
+                .watch(workQueue -> ControllerBuilder
+                        .controllerWatchBuilder(V1ConfigMap.class, workQueue)
                         .withWorkQueueKeyFunc(this::myCrdKeyForConfigMap)
                         .withResyncPeriod(Duration.of(1, ChronoUnit.SECONDS))
                         .build())
                 // .withWorkerCount(2)
-                .withReconciler(reconsiler)
-                .withReadyFunc(shareIndexInformer::hasSynced)
+                .withReconciler(reconciler)
+                .withReadyFunc(() -> myCrdInformer.hasSynced() && configMapInformer.hasSynced())
                 .withName("My controller")
                 .build();
     }
@@ -130,20 +131,20 @@ public class KubernetesControllerApplication {
     }
 
     @Bean
-    Reconciler reconciler(SharedIndexInformer<V1MyCrd> shareIndexInformer,
-                               CoreV1Api coreV1Api) {
+    Reconciler reconciler(SharedIndexInformer<V1MyCrd> myCrdInformer,
+                          CoreV1Api coreV1Api) {
         return request -> {
             logger.info("==== reconcile: " + request);
             String key = request.getNamespace() + "/" + request.getName();
 
-            V1MyCrd resourceInstance = shareIndexInformer
+            V1MyCrd resourceInstance = myCrdInformer
                     .getIndexer()
                     .getByKey(key);
 
             if (resourceInstance != null) {
 
                 V1ConfigMap v1ConfigMap = createConfigMap(resourceInstance);
-                System.out.println("Creating resource...");
+                logger.info("Creating resource...");
 
                 try {
                     coreV1Api.createNamespacedConfigMap(request.getNamespace(),
@@ -153,9 +154,9 @@ public class KubernetesControllerApplication {
                             "",
                             "");
                 } catch (ApiException e) {
-                    System.out.println("Creating resource failed");
+                    logger.info("Creating resource failed");
                     if (e.getCode() == 409) {
-                        System.out.println("Updating resource...");
+                        logger.info("Updating resource...");
                         try {
                             coreV1Api.replaceNamespacedConfigMap("my-config-map",
                                     request.getNamespace(),

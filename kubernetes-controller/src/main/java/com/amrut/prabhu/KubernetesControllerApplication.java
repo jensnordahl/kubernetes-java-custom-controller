@@ -12,12 +12,14 @@ import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.*;
+import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.generic.GenericKubernetesApi;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -30,6 +32,16 @@ public class KubernetesControllerApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(KubernetesControllerApplication.class, args);
+    }
+
+    @Bean
+    ApiClient apiClient() throws IOException {
+        return Config.defaultClient();
+    }
+
+    @Bean
+    SharedInformerFactory sharedInformerFactory(ApiClient apiClient) {
+        return new SharedInformerFactory(apiClient);
     }
 
     @Bean

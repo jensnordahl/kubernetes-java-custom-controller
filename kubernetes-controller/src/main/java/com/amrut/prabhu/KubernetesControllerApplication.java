@@ -5,6 +5,7 @@ import com.amrut.prabhu.models.V1MyCrdList;
 import io.kubernetes.client.extended.controller.Controller;
 import io.kubernetes.client.extended.controller.builder.ControllerBuilder;
 import io.kubernetes.client.extended.controller.reconciler.Reconciler;
+import io.kubernetes.client.extended.controller.reconciler.Request;
 import io.kubernetes.client.extended.controller.reconciler.Result;
 import io.kubernetes.client.informer.SharedIndexInformer;
 import io.kubernetes.client.informer.SharedInformerFactory;
@@ -14,6 +15,8 @@ import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.*;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.generic.GenericKubernetesApi;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,12 +26,15 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @SpringBootApplication
 public class KubernetesControllerApplication {
+
+    public static final Logger logger = LoggerFactory.getLogger(KubernetesControllerApplication.class);
 
     public static void main(String[] args) {
         SpringApplication.run(KubernetesControllerApplication.class, args);
@@ -55,6 +61,17 @@ public class KubernetesControllerApplication {
         return sharedInformerFactory.sharedIndexInformerFor(api, V1MyCrd.class, 0);
     }
 
+    @Bean
+    SharedIndexInformer<V1ConfigMap> configMapInformer(SharedInformerFactory sharedInformerFactory, ApiClient apiClient) {
+        GenericKubernetesApi<V1ConfigMap, V1ConfigMapList> api = new GenericKubernetesApi<>(V1ConfigMap.class,
+                V1ConfigMapList.class,
+                "",
+                "v1",
+                "configmaps",
+                apiClient);
+        return sharedInformerFactory.sharedIndexInformerFor(api, V1ConfigMap.class, 0);
+    }
+
 
     @Bean
     Controller controller(SharedInformerFactory shareformerFactory,
@@ -66,11 +83,30 @@ public class KubernetesControllerApplication {
                         .controllerWatchBuilder(V1MyCrd.class, contrWatchQueue)
                         .withResyncPeriod(Duration.of(1, ChronoUnit.SECONDS))
                         .build())
+                .watch(contrWatchQueue -> ControllerBuilder
+                        .controllerWatchBuilder(V1ConfigMap.class, contrWatchQueue)
+                        .withWorkQueueKeyFunc(this::myCrdKeyForConfigMap)
+                        .withResyncPeriod(Duration.of(1, ChronoUnit.SECONDS))
+                        .build())
                 // .withWorkerCount(2)
                 .withReconciler(reconsiler)
                 .withReadyFunc(shareIndexInformer::hasSynced)
                 .withName("My controller")
                 .build();
+    }
+
+    private Request myCrdKeyForConfigMap(V1ConfigMap v1ConfigMap) {
+        List<V1OwnerReference> ownerReferences = v1ConfigMap.getMetadata().getOwnerReferences();
+        if (ownerReferences == null || ownerReferences.size() < 1) {
+            return null;
+        }
+
+        V1OwnerReference ownerReference = ownerReferences.get(0);
+        if (! "my-crd".equals(ownerReference.getKind())) {
+            return null;
+        }
+
+        return new Request(v1ConfigMap.getMetadata().getNamespace(), ownerReference.getName());
     }
 
     @Bean
@@ -97,6 +133,7 @@ public class KubernetesControllerApplication {
     Reconciler reconciler(SharedIndexInformer<V1MyCrd> shareIndexInformer,
                                CoreV1Api coreV1Api) {
         return request -> {
+            logger.info("==== reconcile: " + request);
             String key = request.getNamespace() + "/" + request.getName();
 
             V1MyCrd resourceInstance = shareIndexInformer

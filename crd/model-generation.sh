@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Local generation
-LOCAL_MANIFEST_FILE=/home/amrut/projects/kubernetes-custom-resource/crd/my-crd.yaml
+LOCAL_MANIFEST_FILE=/data/test/k8s-java-controller/crd/my-crd.yaml
 mkdir -p /tmp/java && cd /tmp/java
 docker run \
   --rm \

@@ -25,35 +25,35 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
 
 /**
- * V1MyCrdSpec
+ * V1MyCrdStatus
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-10-30T15:49:11.949Z[Etc/UTC]")
-public class V1MyCrdSpec {
-  public static final String SERIALIZED_NAME_MY_OWN_PROPERTY = "my-own-property";
-  @SerializedName(SERIALIZED_NAME_MY_OWN_PROPERTY)
-  private String myOwnProperty;
+public class V1MyCrdStatus {
+  public static final String SERIALIZED_NAME_CONFIG_MAP_ID = "configMapId";
+  @SerializedName(SERIALIZED_NAME_CONFIG_MAP_ID)
+  private String configMapId;
 
 
-  public V1MyCrdSpec myOwnProperty(String myOwnProperty) {
+  public V1MyCrdStatus configMapId(String configMapId) {
     
-    this.myOwnProperty = myOwnProperty;
+    this.configMapId = configMapId;
     return this;
   }
 
    /**
-   * Get myOwnProperty
-   * @return myOwnProperty
+   * Get configMapId
+   * @return configMapId
   **/
   @javax.annotation.Nullable
   @ApiModelProperty(value = "")
 
-  public String getMyOwnProperty() {
-    return myOwnProperty;
+  public String getConfigMapId() {
+    return configMapId;
   }
 
 
-  public void setMyOwnProperty(String myOwnProperty) {
-    this.myOwnProperty = myOwnProperty;
+  public void setConfigMapId(String configMapId) {
+    this.configMapId = configMapId;
   }
 
 
@@ -65,21 +65,21 @@ public class V1MyCrdSpec {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    V1MyCrdSpec v1MyCrdSpec = (V1MyCrdSpec) o;
-    return Objects.equals(this.myOwnProperty, v1MyCrdSpec.myOwnProperty);
+    V1MyCrdStatus v1MyCrdStatus = (V1MyCrdStatus) o;
+    return Objects.equals(this.configMapId, v1MyCrdStatus.configMapId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(myOwnProperty);
+    return Objects.hash(configMapId);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class V1MyCrdSpec {\n");
-    sb.append("    myOwnProperty: ").append(toIndentedString(myOwnProperty)).append("\n");
+    sb.append("class V1MyCrdStatus {\n");
+    sb.append("    configMapId: ").append(toIndentedString(configMapId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

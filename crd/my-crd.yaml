@@ -27,3 +27,8 @@ spec:
               properties:
                 my-own-property:
                   type: string
+            status:
+              type: object
+              properties:
+                configMapId:
+                  type: string

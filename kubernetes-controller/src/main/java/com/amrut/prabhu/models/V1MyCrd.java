@@ -16,6 +16,7 @@ package com.amrut.prabhu.models;
 import java.util.Objects;
 import java.util.Arrays;
 import com.amrut.prabhu.models.V1MyCrdSpec;
+import com.amrut.prabhu.models.V1MyCrdStatus;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -29,7 +30,7 @@ import java.io.IOException;
 /**
  * V1MyCrd
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2022-07-02T11:18:30.292Z[Etc/UTC]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-10-30T15:49:11.949Z[Etc/UTC]")
 public class V1MyCrd implements io.kubernetes.client.common.KubernetesObject {
   public static final String SERIALIZED_NAME_API_VERSION = "apiVersion";
   @SerializedName(SERIALIZED_NAME_API_VERSION)
@@ -46,6 +47,10 @@ public class V1MyCrd implements io.kubernetes.client.common.KubernetesObject {
   public static final String SERIALIZED_NAME_SPEC = "spec";
   @SerializedName(SERIALIZED_NAME_SPEC)
   private V1MyCrdSpec spec;
+
+  public static final String SERIALIZED_NAME_STATUS = "status";
+  @SerializedName(SERIALIZED_NAME_STATUS)
+  private V1MyCrdStatus status;
 
 
   public V1MyCrd apiVersion(String apiVersion) {
@@ -140,6 +145,29 @@ public class V1MyCrd implements io.kubernetes.client.common.KubernetesObject {
   }
 
 
+  public V1MyCrd status(V1MyCrdStatus status) {
+    
+    this.status = status;
+    return this;
+  }
+
+   /**
+   * Get status
+   * @return status
+  **/
+  @javax.annotation.Nullable
+  @ApiModelProperty(value = "")
+
+  public V1MyCrdStatus getStatus() {
+    return status;
+  }
+
+
+  public void setStatus(V1MyCrdStatus status) {
+    this.status = status;
+  }
+
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -152,12 +180,13 @@ public class V1MyCrd implements io.kubernetes.client.common.KubernetesObject {
     return Objects.equals(this.apiVersion, v1MyCrd.apiVersion) &&
         Objects.equals(this.kind, v1MyCrd.kind) &&
         Objects.equals(this.metadata, v1MyCrd.metadata) &&
-        Objects.equals(this.spec, v1MyCrd.spec);
+        Objects.equals(this.spec, v1MyCrd.spec) &&
+        Objects.equals(this.status, v1MyCrd.status);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(apiVersion, kind, metadata, spec);
+    return Objects.hash(apiVersion, kind, metadata, spec, status);
   }
 
 
@@ -169,6 +198,7 @@ public class V1MyCrd implements io.kubernetes.client.common.KubernetesObject {
     sb.append("    kind: ").append(toIndentedString(kind)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    spec: ").append(toIndentedString(spec)).append("\n");
+    sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("}");
     return sb.toString();
   }

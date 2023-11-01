@@ -182,7 +182,7 @@ public class KubernetesControllerApplication {
                     if (e.getCode() == 409) {
                         logger.info("Updating resource...");
                         try {
-                            coreV1Api.replaceNamespacedConfigMap("my-config-map",
+                            coreV1Api.replaceNamespacedConfigMap(v1ConfigMap.getMetadata().getName(),
                                     request.getNamespace(),
                                     v1ConfigMap,
                                     "true",
@@ -190,9 +190,11 @@ public class KubernetesControllerApplication {
                                     "",
                                     "");
                         } catch (ApiException ex) {
+                            logger.warn("Failed updating resource..." + ex.getResponseBody());
                             throw new RuntimeException(ex);
                         }
                     } else {
+                        logger.warn("Failed creating resource (wrong reason)" + e.getResponseBody());
                         throw new RuntimeException(e);
                     }
                 }
@@ -214,7 +216,7 @@ public class KubernetesControllerApplication {
     private V1ConfigMap createConfigMap(V1MyCrd resourceInstance) {
         return new V1ConfigMap()
                 .metadata(new V1ObjectMeta()
-                        .name("my-config-map")
+                        .name(resourceInstance.getMetadata().getName() + "-child")
                         .addOwnerReferencesItem(new V1OwnerReference()
                                 .apiVersion(resourceInstance.getApiVersion())
                                 .kind(resourceInstance.getKind())

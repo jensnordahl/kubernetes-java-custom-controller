@@ -1,0 +1,6 @@
+apiVersion: com.amrut.prabhu/v1
+kind: my-crd
+metadata:
+  name: my-other-custom-resource
+spec:
+  my-own-property: "My other CRD instance"

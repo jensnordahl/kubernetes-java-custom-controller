@@ -176,7 +176,7 @@ public class MyCrdReconciler implements Reconciler {
         // Use kubernetes client wrapper to gson, rather than plain gson
         // to have it set up with type adapters
         JSON json = new JSON();
-        return (T) json.deserialize(json.serialize(t), t.getClass());
+        return json.deserialize(json.serialize(t), t.getClass());
     }
 
     private static V1ConfigMap createConfigMap(V1MyCrd resourceInstance) {

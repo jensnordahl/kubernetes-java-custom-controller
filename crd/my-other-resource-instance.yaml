@@ -3,4 +3,4 @@ kind: my-crd
 metadata:
   name: my-other-custom-resource
 spec:
-  my-own-property: "My other CRD instance"
+  my-own-property: "My other CRD instance (updated)"

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 @Component
 public class MyCrdReconciler implements Reconciler {
@@ -153,10 +154,7 @@ public class MyCrdReconciler implements Reconciler {
 
     private void updateStatus(V1MyCrd resource, V1ConfigMap child) {
         logger.info("Updating status: " + child.getMetadata().getName());
-        V1MyCrd copy = deepCopy(resource);
-        copy.setStatus(new V1MyCrdStatus().configMapId(child.getMetadata().getUid()));
-        // TODO: Should use updateStatus (or similar patching) to avoid bumping the generation?
-        KubernetesApiResponse<V1MyCrd> apiResponse = myCrdApi.update(copy);
+        KubernetesApiResponse<V1MyCrd> apiResponse = myCrdApi.updateStatus(resource, r -> new V1MyCrdStatus().configMapId(child.getMetadata().getUid()));
         if (!apiResponse.isSuccess()) {
             throw new RuntimeException("Failed to update status: " + apiResponse.getStatus());
         }

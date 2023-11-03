@@ -27,7 +27,7 @@ import java.io.IOException;
 /**
  * V1MyCrdSpec
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-10-30T15:49:11.949Z[Etc/UTC]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-11-03T12:48:25.326Z[Etc/UTC]")
 public class V1MyCrdSpec {
   public static final String SERIALIZED_NAME_MY_OWN_PROPERTY = "my-own-property";
   @SerializedName(SERIALIZED_NAME_MY_OWN_PROPERTY)

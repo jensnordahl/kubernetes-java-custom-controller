@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 # Local generation
-LOCAL_MANIFEST_FILE=/data/test/k8s-java-controller/crd/my-crd.yaml
+LOCAL_MANIFEST_FILE=$(readlink -f $(dirname $0))/my-crd.yaml
+echo "Generating model classes for $LOCAL_MANIFEST_FILE"
 mkdir -p /tmp/java && cd /tmp/java
 docker run \
   --rm \

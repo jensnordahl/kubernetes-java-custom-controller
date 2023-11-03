@@ -155,6 +155,7 @@ public class MyCrdReconciler implements Reconciler {
         logger.info("Updating status: " + child.getMetadata().getName());
         V1MyCrd copy = deepCopy(resource);
         copy.setStatus(new V1MyCrdStatus().configMapId(child.getMetadata().getUid()));
+        // TODO: Should use updateStatus (or similar patching) to avoid bumping the generation?
         KubernetesApiResponse<V1MyCrd> apiResponse = myCrdApi.update(copy);
         if (!apiResponse.isSuccess()) {
             throw new RuntimeException("Failed to update status: " + apiResponse.getStatus());

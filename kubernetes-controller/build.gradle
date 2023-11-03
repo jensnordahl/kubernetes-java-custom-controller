@@ -17,7 +17,7 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
-	implementation 'io.kubernetes:client-java-spring-integration:16.0.0'
+	implementation 'io.kubernetes:client-java-spring-integration:19.0.0'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
